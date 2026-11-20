@@ -25,16 +25,19 @@ jobs:
           path: bridge
           persist-credentials: false
 
-      - name: Build ESP32-S3 CMSIS-DAP (USB bulk)
+      - name: Build ESP32-S3 CMSIS-DAP (USB bulk, 8MB flash)
         working-directory: bridge
         env:
-          SDKCONFIG_DEFAULTS: "sdkconfig.defaults;sdkconfig.defaults.esp32s3;sdkconfig.swd.defaults"
+          SDKCONFIG_DEFAULTS: "sdkconfig.defaults;sdkconfig.defaults.esp32s3;sdkconfig.swd.defaults;sdkconfig.board-8mb.defaults"
         run: |
           . "$IDF_PATH/export.sh"
+          printf '%s\n' 'CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y' > sdkconfig.board-8mb.defaults
           idf.py build
           grep -qx 'CONFIG_IDF_TARGET="esp32s3"' sdkconfig
           grep -qx 'CONFIG_DEBUG_PROBE_IFACE_SWD=y' sdkconfig
           grep -qx 'CONFIG_DEBUG_PROBE_IFACE_NAME="CMSIS-DAP"' sdkconfig
+          grep -qx 'CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y' sdkconfig
+          grep -qx 'CONFIG_ESPTOOLPY_FLASHSIZE="8MB"' sdkconfig
           idf.py merge-bin -o orca-swd-esp32s3.bin
           test -s build/orca-swd-esp32s3.bin
           sha256sum build/orca-swd-esp32s3.bin
@@ -42,6 +45,6 @@ jobs:
       - name: Upload binary (no flashing)
         uses: actions/upload-artifact@v4
         with:
-          name: orca-swd-esp32s3
+          name: orca-swd-esp32s3-8mb
           path: bridge/build/orca-swd-esp32s3.bin
           if-no-files-found: error
