@@ -4,12 +4,13 @@ Build-only GitHub Actions workflow for a generic **ESP32-S3 CMSIS-DAP (USB bulk)
 
 ## Build
 
-Open **Actions → Build ESP32-S3 CMSIS-DAP → Run workflow**, or let a change to the workflow file trigger a build. On success, download the `orca-swd-esp32s3` artifact ZIP and extract `orca-swd-esp32s3.bin`.
+Open **Actions → Build ESP32-S3 CMSIS-DAP → Run workflow**, or let a change to the workflow file trigger a build. On success, download the latest `orca-swd-esp32s3-8mb` artifact ZIP and extract `orca-swd-esp32s3.bin`.
 
 - Upstream revision is pinned in the workflow for reproducibility.
 - Build uses the official `espressif/idf:v5.4` container. No local ESP-IDF download is needed.
 - The generated binary is **not flashed** by this workflow.
 - SWD mode is explicitly selected and checked after build.
+- ESP32-S3 8MB flash size is configured and validated to match the measured hardware; the earlier 2MB-default artifact must not be used.
 
 ## Hardware safety / pending checks
 
